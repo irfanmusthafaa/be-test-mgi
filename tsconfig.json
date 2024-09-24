@@ -1,0 +1,12 @@
+{
+  "compilerOptions": {
+    "target": "ES6",                  // Versi JavaScript target
+    "module": "commonjs",              // Format modul
+    "rootDir": "./src",                // Folder root tempat TypeScript mencari file sumber
+    "outDir": "./dist",                // Folder output untuk file hasil kompilasi
+    "esModuleInterop": true,           // Memungkinkan impor default dari modul CommonJS
+    "strict": true,                    // Mengaktifkan pemeriksaan tipe yang ketat
+    "skipLibCheck": true,              // Melewati pemeriksaan tipe untuk file d.ts
+    "forceConsistentCasingInFileNames": true // Casing nama file konsisten
+  }
+}
