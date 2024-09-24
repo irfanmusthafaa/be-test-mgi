@@ -56,10 +56,10 @@ const importData = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     try {
         const users = req.body;
         yield User_1.default.insertMany(users);
-        res.status(201).send('Data imported successfully.');
+        res.status(201).send({ message: 'Data imported successfully.' });
     }
     catch (error) {
-        res.status(500).send('Error importing data');
+        res.status(500).send({ message: 'Error importing data' });
     }
 });
 exports.importData = importData;
@@ -79,7 +79,7 @@ const updateUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     try {
         const { id } = req.params;
         const updatedUser = yield User_1.default.findByIdAndUpdate(id, req.body, { new: true });
-        res.json(updatedUser);
+        res.json({ data: updatedUser, message: "Update data successfull" });
     }
     catch (error) {
         res.status(500).send('Error updating user');
@@ -91,21 +91,19 @@ const deleteUser = (req, res) => __awaiter(void 0, void 0, void 0, function* () 
     try {
         const { id } = req.params;
         yield User_1.default.findByIdAndDelete(id);
-        res.send('User deleted');
+        res.send({ message: 'User deleted successfully' });
     }
     catch (error) {
         res.status(500).send('Error deleting user');
     }
 });
 exports.deleteUser = deleteUser;
+//export Data
 const exportToExcel = (req, res) => __awaiter(void 0, void 0, void 0, function* () {
     try {
-        // Ambil semua data dari MongoDB
         const users = yield User_1.default.find();
-        // Buat workbook baru
         const workbook = new exceljs_1.default.Workbook();
         const worksheet = workbook.addWorksheet('Users');
-        // Tambahkan header ke worksheet
         worksheet.columns = [
             { header: 'id', key: 'id', width: 10 },
             { header: 'nama', key: 'nama', width: 20 },
@@ -113,7 +111,6 @@ const exportToExcel = (req, res) => __awaiter(void 0, void 0, void 0, function* 
             { header: 'telepon', key: 'telepon', width: 15 },
             { header: 'alamat', key: 'alamat', width: 30 },
         ];
-        // Tambahkan data ke worksheet
         users.forEach(user => {
             worksheet.addRow({
                 id: user.id,
@@ -123,10 +120,8 @@ const exportToExcel = (req, res) => __awaiter(void 0, void 0, void 0, function* 
                 alamat: user.alamat
             });
         });
-        // Siapkan response untuk mengunduh file Excel
         res.setHeader('Content-Type', 'application/vnd.openxmlformats-officedocument.spreadsheetml.sheet');
         res.setHeader('Content-Disposition', 'attachment; filename=users.xlsx');
-        // Kirimkan file Excel ke klien
         yield workbook.xlsx.write(res);
         res.status(200).end();
     }
@@ -136,21 +131,3 @@ const exportToExcel = (req, res) => __awaiter(void 0, void 0, void 0, function* 
     }
 });
 exports.exportToExcel = exportToExcel;
-// Ekspor data ke Excel
-// export const exportToExcel = async (req: Request, res: Response) => {
-//   try {
-//     const users = await User.find();
-//     const json2csvParser = new Parser();
-//     const csv = json2csvParser.parse(users);
-//     const filePath = './exports/users.csv';
-//     fs.writeFileSync(filePath, csv);
-//     res.download(filePath, 'users.csv', (err) => {
-//       if (err) {
-//         res.status(500).send('Error exporting data');
-//       }
-//       fs.unlinkSync(filePath);
-//     });
-//   } catch (error) {
-//     res.status(500).send('Error exporting data');
-//   }
-// };
